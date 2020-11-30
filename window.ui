@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1061</width>
+    <height>750</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1061</width>
+    <height>750</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1061</width>
+    <height>750</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Auto STAR Planner</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/planner.png</normaloff>:/planner.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QTableWidget" name="plannerTable">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <row>
+       <property name="text">
+        <string>Time\Day</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>0800-0830</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>0830-0900</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>0900-0930</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>0930-1000</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1000-1030</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1030-1100</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1100-1130</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1130-1200</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1200-1230</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1230-1300</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1300-1330</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1330-1400</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1400-1430</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1430-1500</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1500-1530</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1530-1600</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1600-1630</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1630-1700</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1700-1730</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1730-1800</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1800-1830</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1830-1900</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1900-1930</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>1930-2000</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>2000-2030</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>2030-2100</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>2100-2130</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>2130-2200</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>2200-2230</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>2230-2300</string>
+       </property>
+      </row>
+      <row>
+       <property name="text">
+        <string>2300-2330</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Monday</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Tuesday</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Wednesday</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Thursday</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Friday</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Saturday</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="planLbl">
+        <property name="font">
+         <font>
+          <family>Arial</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Plan: </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="planComboBox"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1061</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionLoad_Class_Schedule"/>
+    <addaction name="actionAdd_Courses"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionLoad_Class_Schedule">
+   <property name="text">
+    <string>Load Class Schedule</string>
+   </property>
+  </action>
+  <action name="actionAdd_Courses">
+   <property name="text">
+    <string>Add Courses</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
