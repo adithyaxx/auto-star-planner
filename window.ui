@@ -56,11 +56,6 @@
       </property>
       <row>
        <property name="text">
-        <string>Time\Day</string>
-       </property>
-      </row>
-      <row>
-       <property name="text">
         <string>0800-0830</string>
        </property>
       </row>

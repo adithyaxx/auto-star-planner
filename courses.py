@@ -28,6 +28,10 @@ class Lecture:
         self.time = time
 
     def getLecTiming(self):
+        lecTime = [self.day, self.time]
+        return lecTime
+
+    def printLecTiming(self):
         return f"{self.day}, {self.time}"
 
 class IndexInfo:
@@ -37,6 +41,10 @@ class IndexInfo:
         self.indexInfoType = indexInfoType
 
     def getTiming(self):
+        timing = [self.day, self.time]
+        return timing
+
+    def printTiming(self):
         if self.indexInfoType == typeInfoEnum.TUT:
             return f"Tutorial, {self.day}, {self.time}"
         else:
@@ -46,6 +54,7 @@ class Index:
     def __init__(self, indexNo):
         self.indexNo = indexNo
         self.indexInfoList = []
+        self.next = None    # used to create the indexGraph. value is None or indexList
 
 class Course:
     def __init__(self, courseCode):
@@ -54,16 +63,22 @@ class Course:
         self.lecList = []
 
     def getLecTiming(self):
+        lecTimingList = []
+        for lec in self.lecList:
+            lecTimingList.append(lec.getLecTiming())
+        return lecTimingList
+
+    def printLecTiming(self):
         if not self.lecList:    # list is empty
             print("This course has no lecture")
         else:
             for lec in self.lecList:
-                print(f"\t{lec.getLecTiming()}")
+                print(f"\t{lec.printLecTiming()}")
 
     def printCourseInfo(self):
         print(f"Course Code: {self.courseCode}")
-        self.getLecTiming()
+        self.printLecTiming()
         for index in self.indexList:
             print(f"\tIndex: {index.indexNo}")
             for indexInfo in index.indexInfoList:
-                print(f"\t\t{indexInfo.getTiming()}") 
+                print(f"\t\t{indexInfo.printTiming()}") 
