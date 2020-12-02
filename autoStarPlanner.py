@@ -10,10 +10,9 @@ from PyQt5.QtCore import (pyqtSignal, pyqtSlot)
 from PyQt5.QtGui import (QFont, QTextCharFormat)
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QDialog, QMessageBox, QLabel)
 
-class AddCourses(QDialog, addCourses.Ui_dialog):
+class AddCourses(QDialog, addCourses.Ui_dialog):    
     lecInfo = pyqtSignal(int, list, str)
-    done = pyqtSignal()
-    
+    donePlanning = pyqtSignal()
     def __init__(self):
         super(AddCourses, self).__init__()
         self.courseList = []
@@ -65,7 +64,7 @@ class AddCourses(QDialog, addCourses.Ui_dialog):
         self.dayTimeEvenOdd = []
         for i in range(0, 31):
             self.dayTime.append([0] * 6)
-            self.dayTimeEvenOdd.append(["NIL"] * 6)     # NIL, A = All week, E = Even week, O = Odd Week, EO = Even and Odd Week
+            self.dayTimeEvenOdd.append(["NIL"] * 6)     # NIL, A = All week, E = Even week, O = Odd Week, EO = Even and Odd Week, MDP = MDP
 
         self.setupUi(self)
         self.planBtn.pressed.connect(self.check)
@@ -135,7 +134,7 @@ class AddCourses(QDialog, addCourses.Ui_dialog):
             self.dayTime.append([0] * 6)
             self.dayTimeEvenOdd.append(["NIL"] * 6)
         self.hide()
-        self.done.emit()
+        self.donePlanning.emit()
 
     def createIndexGraph(self):
         for i in range(len(self.selectedCourse) - 1):
@@ -230,8 +229,10 @@ class AddCourses(QDialog, addCourses.Ui_dialog):
                 self.dayTime[row][col] = 1
                 if remarks == "Even":
                     self.dayTimeEvenOdd[row][col] = "E"
-                else:
+                elif remarks == "Odd":
                     self.dayTimeEvenOdd[row][col] = "O"
+                else:
+                    self.dayTimeEvenOdd[row][col] = "MDP"
             else:   # something is occupying that slot. need to check
                 if self.dayTimeEvenOdd[row][col] == "A":
                     ableToSet = False
@@ -274,6 +275,8 @@ class AddCourses(QDialog, addCourses.Ui_dialog):
                 return True
             elif remarks == "Odd" and (self.dayTimeEvenOdd[row][col] == "A" or self.dayTimeEvenOdd[row][col] == "O" or self.dayTimeEvenOdd[row][col] == "EO"):
                 return True
+            elif remarks == "MDP" and self.dayTime[row][col] == 1:
+                return True
         return False
 
     def gotClash(self, col, rowRange):
@@ -295,7 +298,7 @@ class Window(QMainWindow, window.Ui_MainWindow):
         self.planSpinBox.valueChanged.connect(self.onPlanValueChanged)
         self.addCoursesDialog = AddCourses()
         self.addCoursesDialog.lecInfo.connect(self.on_lecInfo_emitted)
-        self.addCoursesDialog.done.connect(self.on_done_emitted)
+        self.addCoursesDialog.donePlanning.connect(self.on_donePlanning_emitted)
         self.actionAdd_Courses.setEnabled(False)
 
         self.actionLoad_Class_Schedule.triggered.connect(self.loadClassSchedule)
@@ -358,7 +361,7 @@ class Window(QMainWindow, window.Ui_MainWindow):
                                     self.plannerTable.setCellWidget(row, col, tempLabel)
 
     @pyqtSlot()
-    def on_done_emitted(self):
+    def on_donePlanning_emitted(self):
         if self.addCoursesDialog.potentialPlan:
             self.planSpinBox.setEnabled(True)
             self.planSpinBox.setMaximum(len(self.addCoursesDialog.potentialPlan))
@@ -446,6 +449,9 @@ class Window(QMainWindow, window.Ui_MainWindow):
                 elif "".join(item.findAll(text=True)) == "Teaching Wk1,3,5,7,9,11,13":
                     index.indexInfoList.append(IndexInfo(day, time, typeInfoEnum.LAB))
                     index.indexInfoList[-1].remarks = "Odd"
+                elif course.courseCode == "CZ3004":
+                    index.indexInfoList.append(IndexInfo(day, time, typeInfoEnum.LAB))
+                    index.indexInfoList[-1].remarks = "MDP"
             col += 1
         course.indexList.append(index)  # this is to add the last index as the algo only add the index at the next index
 
