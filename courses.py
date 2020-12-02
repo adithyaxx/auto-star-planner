@@ -67,18 +67,3 @@ class Course:
         for lec in self.lecList:
             lecTimingList.append(lec.getLecTiming())
         return lecTimingList
-
-    def printLecTiming(self):
-        if not self.lecList:    # list is empty
-            print("This course has no lecture")
-        else:
-            for lec in self.lecList:
-                print(f"\t{lec.printLecTiming()}")
-
-    def printCourseInfo(self):
-        print(f"Course Code: {self.courseCode}")
-        self.printLecTiming()
-        for index in self.indexList:
-            print(f"\tIndex: {index.indexNo}")
-            for indexInfo in index.indexInfoList:
-                print(f"\t\t{indexInfo.printTiming()}") 

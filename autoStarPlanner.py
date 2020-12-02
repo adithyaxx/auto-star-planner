@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QDialog, QMessageBox, QL
 
 class AddCourses(QDialog, addCourses.Ui_dialog):
     lecInfo = pyqtSignal(int, list, str)
+    done = pyqtSignal()
     
     def __init__(self):
         super(AddCourses, self).__init__()
@@ -58,6 +59,7 @@ class AddCourses(QDialog, addCourses.Ui_dialog):
             "2230":29,
             "2300":30,
         }
+        self.potentialPlan = []
 
         self.dayTime = []
         self.dayTimeEvenOdd = []
@@ -86,70 +88,91 @@ class AddCourses(QDialog, addCourses.Ui_dialog):
             
             if not valid:
                 QMessageBox.critical(self, "Add Course", f"{culprit} is not found in class schedule")
+                self.hide()
             else:
                 self.planBtn.setText("Plan")
                 QMessageBox.information(self, "Add Course", "Check OK!\nPress the plan button")
         else:
+            self.planBtn.setText("Check")
             self.plan()
 
     def plan(self):
+        self.potentialPlan.clear()
         print("Plan my semester...")
         # Step 1: Check for clashing lectures (Future update: Check which course lecture clash with which)
         if not (self.setLecTimeOnArray()):
             QMessageBox.critical(self, "Add Course", "Unable to plan the semester with these course setup.\nThere are clashing lectures.")
-            return False
+            self.hide()
+            return
 
         # Step 2: Remove all the course indexes that clashes with the set course lecture
         if not (self.removeClashingCourseIndexes()):
             QMessageBox.critical(self, "Add Course", "Unable to plan the semester with these course setup.\nThere's a course with 0 index after removing index clashing with lectures")
-            return False
+            self.hide()
+            return
 
         # Step 3: Create index graph
         self.createIndexGraph()
-        # for course in self.selectedCourse:
-        #     print(f"{course.courseCode}")
-        #     for index in course.indexList:
-        #         print(f"\tIndex: {index.indexNo}")
-        #         if index.next:
-        #             for nextIndex in index.next:
-        #                 print(f"\t\tNext Index: {nextIndex.indexNo}")
         
-        # Step 4: Do DFS, removing all the clashing links
-        self.dfsRemoveLink()
+        # Step 4: Do DFS to gather the potential plans
+        self.dfsMain()
+        if self.potentialPlan:
+            print(f"There are {len(self.potentialPlan)} potential plan(s)")
+            QMessageBox.information(self, "Add Courses", f"There are {len(self.potentialPlan)} potential plan(s)")
+            
+            # Do this code at the end after got valid plan(s) to set the lecture timings
+            for course in self.selectedCourse:
+                for lecTiming in course.getLecTiming():
+                    self.lecInfo.emit(self.getColIndex(lecTiming[0]), self.getRowRangeIndex(lecTiming[1]), f"{course.courseCode} Lec")
+        else:
+            QMessageBox.critical(self, "Add Courses", "Unable to plan the semester with these course setup")
+            self.hide()
+            return
+        # clear the dayTime and dayTimeEvenOdd after finishing
+        self.dayTime = []
+        self.dayTimeEvenOdd = []
+        for i in range(0, 31):
+            self.dayTime.append([0] * 6)
+            self.dayTimeEvenOdd.append(["NIL"] * 6)
+        self.hide()
+        self.done.emit()
 
     def createIndexGraph(self):
         for i in range(len(self.selectedCourse) - 1):
            for index in self.selectedCourse[i].indexList:
-               index.next = self.selectedCourse[i+1].indexList.copy()     
+               index.next = self.selectedCourse[i+1].indexList   
 
-    # it works... partially... i didnt take care of lab. got even/odd week. can cramp 2 different indexes lab into 1 timing
-    def dfsRemoveLink(self):
+    def dfsMain(self):
+        tempPlan = []
         for index in self.selectedCourse[0].indexList:
             self.tempMarkDayTime(index)
-            self.dfs(index)
+            tempPlan.append(index)
+            self.dfs(index, tempPlan)
+            tempPlan.remove(index)
             self.unmarkDayTime(index)
 
-    def dfs(self, index):
-        if index.next:
-            tempIndexList = []
+    def dfs(self, index, tempPlan):
+        if len(tempPlan) == len(self.selectedCourse):
+            self.potentialPlan.append(tempPlan.copy())
+        else:
+            # some course only have tut while some have both tut and lab.
+            # i need to check if that index have slot. mean check all the indexInfo does not clash
             for nextIndex in index.next:
+                clash = False
                 for nextIndexInfo in nextIndex.indexInfoList:
                     if nextIndexInfo.indexInfoType == typeInfoEnum.TUT:
                         if (self.gotClash(self.getColIndex(nextIndexInfo.day), self.getRowRangeIndex(nextIndexInfo.time))):
-                            tempIndexList.append(nextIndex)
+                            clash = True
                             break
-                    else:   # If not tut, there can only be lab. but idk. i could be wrong. will update later in the future maybe
+                    else:   # currently, if not tut, then it means lab. this is a possible area of update
                         if (self.gotClashForLab(self.getColIndex(nextIndexInfo.day), self.getRowRangeIndex(nextIndexInfo.time), nextIndexInfo.remarks)):
-                            tempIndexList.append(nextIndex)
+                            clash = True
                             break
-            # remove the clashing index from nextIndex
-            for tempIndex in tempIndexList:
-                index.next.remove(tempIndex)
-            # check if there's at least 1 index in index.next
-            if index.next:
-                for nextIndex in index.next:
+                if not clash:   # if there's no clash, do dfs
                     self.tempMarkDayTime(nextIndex)
-                    self.dfs(nextIndex)
+                    tempPlan.append(nextIndex)
+                    self.dfs(nextIndex, tempPlan)
+                    tempPlan.remove(nextIndex)
                     self.unmarkDayTime(nextIndex)
 
     def tempMarkDayTime(self, index):
@@ -227,10 +250,6 @@ class AddCourses(QDialog, addCourses.Ui_dialog):
                 if not (self.setOnArray(self.getColIndex(lecTiming[0]), self.getRowRangeIndex(lecTiming[1]))):
                     return False
         return True
-        # Do this code at the end after got valid plan(s)
-        # for course in self.selectedCourse:
-        #     for lecTiming in course.getLecTiming():
-        #         self.lecInfo.emit(self.getColIndex(lecTiming[0]), self.getRowRangeIndex(lecTiming[1]), f"{course.courseCode} Lec")
 
     # removing course indexes that clashes with lecture timing
     def removeClashingCourseIndexes(self):
@@ -267,19 +286,91 @@ class Window(QMainWindow, window.Ui_MainWindow):
     def __init__(self):
         super(Window, self).__init__()
         self.courseList = []
+        self.lastPlanSpinBoxValue = None
+        self.currentPlanSpinBoxValue = None
 
         self.setupUi(self)
-        self.loaded = False
+        self.overviewLbl.hide()
+        self.planSpinBox.setEnabled(False)
+        self.planSpinBox.valueChanged.connect(self.onPlanValueChanged)
         self.addCoursesDialog = AddCourses()
         self.addCoursesDialog.lecInfo.connect(self.on_lecInfo_emitted)
+        self.addCoursesDialog.done.connect(self.on_done_emitted)
+        self.actionAdd_Courses.setEnabled(False)
 
         self.actionLoad_Class_Schedule.triggered.connect(self.loadClassSchedule)
         self.actionAdd_Courses.triggered.connect(self.openAddCoursesDialog)
 
+    def onPlanValueChanged(self, newValue):
+        if newValue != 0:
+            self.lastPlanSpinBoxValue = self.currentPlanSpinBoxValue
+            self.currentPlanSpinBoxValue = newValue
+            if self.lastPlanSpinBoxValue:
+                self.clearOldTable(self.lastPlanSpinBoxValue)
+            self.setNewTable(newValue)
+            self.setOverview(newValue)
+            
+
+    def setOverview(self, newValue):
+        plan = self.addCoursesDialog.potentialPlan[newValue - 1]
+        text = ""
+        for i in range(len(plan)):
+            text += f"{self.addCoursesDialog.selectedCourse[i].courseCode}: {plan[i].indexNo}          "
+        self.overviewLbl.setText(text)
+        self.overviewLbl.show()
+
+    def clearOldTable(self, oldValue):
+        plan = self.addCoursesDialog.potentialPlan[oldValue - 1]
+        for i in range(len(plan)):
+            for index in self.addCoursesDialog.selectedCourse[i].indexList: # loop all the indexes for that course
+                if index.indexNo == plan[i].indexNo:    # if both indexes are the same
+                    for indexInfo in index.indexInfoList:   # get the index info
+                        rowRange = self.addCoursesDialog.getRowRangeIndex(indexInfo.time)
+                        col = self.addCoursesDialog.getColIndex(indexInfo.day)
+                        for row in range(rowRange[0], rowRange[1]):
+                            if self.plannerTable.cellWidget(row, col):  # if there's a value in that cell
+                                self.plannerTable.setCellWidget(row, col, None) # remove it
+
+    def setNewTable(self, newValue):
+        plan = self.addCoursesDialog.potentialPlan[newValue - 1]
+        for i in range(len(plan)):
+            for index in self.addCoursesDialog.selectedCourse[i].indexList: # loop all the indexes for that course
+                if index.indexNo == plan[i].indexNo:    # if both indexes are the same
+                    for indexInfo in index.indexInfoList:   # get the index info
+                        rowRange = self.addCoursesDialog.getRowRangeIndex(indexInfo.time)
+                        col = self.addCoursesDialog.getColIndex(indexInfo.day)
+                        if indexInfo.indexInfoType == typeInfoEnum.TUT: # separate algo for TUT and LAB
+                            for row in range(rowRange[0], rowRange[1]):
+                                tempLabel = QLabel(f"{self.addCoursesDialog.selectedCourse[i].courseCode} TUT")
+                                tempLabel.setStyleSheet("background-color: springgreen; font-family: Arial; font-size: 22px")
+                                self.plannerTable.setCellWidget(row, col, tempLabel)
+                        else:   # LAB algo
+                            for row in range(rowRange[0], rowRange[1]):
+                                if (self.plannerTable.cellWidget(row, col)):  # if there's some value existing in that cell
+                                    text = self.plannerTable.cellWidget(row, col).text()
+                                    text += f"\n{self.addCoursesDialog.selectedCourse[i].courseCode} LAB {indexInfo.remarks}"
+                                    tempLabel = QLabel(text)
+                                    tempLabel.setStyleSheet("background-color: salmon; font-family: Arial; font-size: 22px")
+                                    self.plannerTable.setCellWidget(row, col, tempLabel)
+                                else:   # there's no value in that cell
+                                    tempLabel = QLabel(f"{self.addCoursesDialog.selectedCourse[i].courseCode} LAB {indexInfo.remarks}")
+                                    tempLabel.setStyleSheet("background-color: salmon; font-family: Arial; font-size: 22px")
+                                    self.plannerTable.setCellWidget(row, col, tempLabel)
+
+    @pyqtSlot()
+    def on_done_emitted(self):
+        if self.addCoursesDialog.potentialPlan:
+            self.planSpinBox.setEnabled(True)
+            self.planSpinBox.setMaximum(len(self.addCoursesDialog.potentialPlan))
+            self.planSpinBox.setValue(1)
+            self.planSpinBox.setMinimum(1)
+
     @pyqtSlot(int, list, str)
     def on_lecInfo_emitted(self, col, rowRange, info):
         for row in range(rowRange[0], rowRange[1]):
-            self.plannerTable.setCellWidget(row, col, QLabel(info))
+            tempLabel = QLabel(info)
+            tempLabel.setStyleSheet("background-color: lightskyblue; font-family: Arial; font-size: 22px")
+            self.plannerTable.setCellWidget(row, col, tempLabel)
 
     def duplCourse(self, name):
         for course in self.courseList:
@@ -358,8 +449,18 @@ class Window(QMainWindow, window.Ui_MainWindow):
             col += 1
         course.indexList.append(index)  # this is to add the last index as the algo only add the index at the next index
 
+    def clearTable(self):
+        self.overviewLbl.hide()
+        for row in range(self.plannerTable.rowCount()):
+            for col in range(self.plannerTable.columnCount()):
+                self.plannerTable.setCellWidget(row, col, None)
+
     def loadClassSchedule(self):
-        self.loaded = True
+        self.actionAdd_Courses.setEnabled(True)
+        self.planSpinBox.setEnabled(False)
+        self.planSpinBox.setMinimum(0)
+        self.planSpinBox.setMaximum(0)
+        self.clearTable()
         self.courseList.clear
         for fileName in os.listdir("classSchedule"):
             with open(os.path.join("classSchedule", fileName), 'r') as f:
@@ -371,10 +472,8 @@ class Window(QMainWindow, window.Ui_MainWindow):
         QMessageBox.information(self, "Load Class Schedule", f"{len(self.courseList)} class schedules loaded.")
 
     def openAddCoursesDialog(self):
-        if not self.loaded:
-            QMessageBox.critical(self, "Add Course", "Please load the class schedule first")
-        else:
-            self.addCoursesDialog.show()
+        self.actionAdd_Courses.setEnabled(False)
+        self.addCoursesDialog.show()
 
 def main():
     app = QApplication(sys.argv)

@@ -16,12 +16,6 @@
     <height>750</height>
    </size>
   </property>
-  <property name="maximumSize">
-   <size>
-    <width>1061</width>
-    <height>750</height>
-   </size>
-  </property>
   <property name="windowTitle">
    <string>Auto STAR Planner</string>
   </property>
@@ -244,6 +238,13 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
+       <widget class="QLabel" name="overviewLbl">
+        <property name="text">
+         <string>Sample</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -270,7 +271,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="planComboBox"/>
+       <widget class="QSpinBox" name="planSpinBox"/>
       </item>
      </layout>
     </item>
