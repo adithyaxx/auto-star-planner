@@ -11,6 +11,9 @@ from PyQt5.QtGui import (QFont, QTextCharFormat)
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QDialog, QMessageBox, QLabel)
 
 from fetch_schedule import FetchSchedule
+from easysettings import EasySettings
+
+settings = EasySettings("settings.conf")
 
 
 class AddCourses(QDialog, addCourses.Ui_dialog):
@@ -320,10 +323,23 @@ class Window(QMainWindow, window.Ui_MainWindow):
 
         self.addCoursesBtn.pressed.connect(self.openAddCoursesDialog)
         self.addCoursesBtn.setEnabled(False)
+
         self.majorComboBox.addItems(self.loadMajors())
+        self.majorComboBox.setCurrentText(settings.get("major"))
+        self.majorComboBox.currentIndexChanged.connect(self.on_major_clicked)
+
         self.semesterComboBox.addItems(self.loadSemList())
+        self.semesterComboBox.setCurrentText(settings.get("sem"))
+        self.semesterComboBox.currentIndexChanged.connect(self.on_sem_clicked)
+
         self.loadBtn.pressed.connect(self.getClassSchedule)
         self.progressBar.setVisible(False)
+
+    def on_major_clicked(self):
+        settings.setsave("major", self.majorComboBox.currentText())
+
+    def on_sem_clicked(self):
+        settings.setsave("sem", self.semesterComboBox.currentText())
 
     def loadMajors(self):
         with open('courses_list.txt') as f:

@@ -244,4 +244,6 @@ class Ui_MainWindow(object):
         self.planLbl.setText(_translate("MainWindow", "Plan: "))
         self.actionLoad_Class_Schedule.setText(_translate("MainWindow", "Load Class Schedule"))
         self.actionAdd_Courses.setText(_translate("MainWindow", "Add Courses"))
+
+
 import resources_rc

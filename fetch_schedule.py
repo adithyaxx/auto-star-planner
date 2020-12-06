@@ -43,6 +43,8 @@ class FetchSchedule(QThread):
                 major_select.select_by_visible_text(text)
                 driver.find_element_by_xpath('/html/body/form/div[3]/table/tbody/tr/td[2]/input').click()
                 driver.switch_to.window(driver.window_handles[-1])
+                if not os.path.exists('classSchedule'):
+                    os.makedirs('classSchedule')
                 with open('classSchedule/' + text + '.html', 'wb') as f:
                     f.write(driver.page_source.encode('utf-8'))
                 driver.switch_to.window(driver.window_handles[0])
