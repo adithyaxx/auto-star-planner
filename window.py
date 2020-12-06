@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'window.ui'
+# Form implementation generated from reading ui file '/Users/adithya/Workspace/auto-star-planner/window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -23,6 +23,27 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.semesterComboBox = QtWidgets.QComboBox(self.centralwidget)
+        self.semesterComboBox.setObjectName("semesterComboBox")
+        self.horizontalLayout_2.addWidget(self.semesterComboBox)
+        self.majorComboBox = QtWidgets.QComboBox(self.centralwidget)
+        self.majorComboBox.setObjectName("majorComboBox")
+        self.horizontalLayout_2.addWidget(self.majorComboBox)
+        self.loadBtn = QtWidgets.QPushButton(self.centralwidget)
+        self.loadBtn.setMinimumSize(QtCore.QSize(208, 0))
+        self.loadBtn.setMaximumSize(QtCore.QSize(208, 16777215))
+        self.loadBtn.setObjectName("loadBtn")
+        self.horizontalLayout_2.addWidget(self.loadBtn)
+        self.addCoursesBtn = QtWidgets.QPushButton(self.centralwidget)
+        self.addCoursesBtn.setObjectName("addCoursesBtn")
+        self.horizontalLayout_2.addWidget(self.addCoursesBtn)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
+        self.progressBar.setProperty("value", 24)
+        self.progressBar.setObjectName("progressBar")
+        self.verticalLayout.addWidget(self.progressBar)
         self.plannerTable = QtWidgets.QTableWidget(self.centralwidget)
         self.plannerTable.setEnabled(True)
         self.plannerTable.setMinimumSize(QtCore.QSize(0, 0))
@@ -129,12 +150,6 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.planSpinBox)
         self.verticalLayout.addLayout(self.horizontalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1061, 18))
-        self.menubar.setObjectName("menubar")
-        self.menuFile = QtWidgets.QMenu(self.menubar)
-        self.menuFile.setObjectName("menuFile")
-        MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
@@ -142,9 +157,6 @@ class Ui_MainWindow(object):
         self.actionLoad_Class_Schedule.setObjectName("actionLoad_Class_Schedule")
         self.actionAdd_Courses = QtWidgets.QAction(MainWindow)
         self.actionAdd_Courses.setObjectName("actionAdd_Courses")
-        self.menuFile.addAction(self.actionLoad_Class_Schedule)
-        self.menuFile.addAction(self.actionAdd_Courses)
-        self.menubar.addAction(self.menuFile.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -152,6 +164,8 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Auto STAR Planner"))
+        self.loadBtn.setText(_translate("MainWindow", "Load Schedule"))
+        self.addCoursesBtn.setText(_translate("MainWindow", "Add Courses"))
         item = self.plannerTable.verticalHeaderItem(0)
         item.setText(_translate("MainWindow", "0800-0830"))
         item = self.plannerTable.verticalHeaderItem(1)
@@ -228,7 +242,6 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "Saturday"))
         self.overviewLbl.setText(_translate("MainWindow", "Sample"))
         self.planLbl.setText(_translate("MainWindow", "Plan: "))
-        self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionLoad_Class_Schedule.setText(_translate("MainWindow", "Load Class Schedule"))
         self.actionAdd_Courses.setText(_translate("MainWindow", "Add Courses"))
 import resources_rc

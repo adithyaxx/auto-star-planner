@@ -1,0 +1,5 @@
+['Acad Yr 2020 Semester 1',
+'Acad Yr 2019 Semester 2',
+'Acad Yr 2019 Semester 1',
+'Acad Yr 2019 Special Term I',
+'Acad Yr 2019 Special Term II']
